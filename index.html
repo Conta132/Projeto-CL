@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>ALCS</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+    <h1>Automatic Logistics Counting Software</h1>
+    <h2>Credit counting:</h2>
+
+    <label for="itemInput">Input the name of the item:</label>
+    <input type="text" id="itemInput" placeholder="Ex: Pipe-machine pistol">
+
+    <label for="itemQuantity">Quantity:</label>
+    <input type="number" id="itemQuantity" min="1" value="1">
+  
+    <button id="addItem">Add</button>
+    <button id="resetList">Clear</button>
+
+    <p class="error" id="erroMsg"></p>
+
+    <h3>Items added:</h2>
+    <ul id="itemList"></ul>
+
+    <h3>Credit total: <span id="totalCredits">0</span></h2>
+
+    <h3>Total de Reputação: <span id="totalReputation">0</span></h2>
+
+    <script src="script.js"></script>
+</body>
+</html>
