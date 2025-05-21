@@ -8,7 +8,7 @@
 <body>
 
     <h1>Automatic Logistics Counting Software</h1>
-    <h2>Credit counting:</h2>
+    <h2>Donation processing:</h2>
 
     <label for="itemInput">Input the name of the item:</label>
     <input type="text" id="itemInput" placeholder="Ex: Pipe-machine pistol">
@@ -19,14 +19,26 @@
     <button id="addItem">Add</button>
     <button id="resetList">Clear</button>
 
-    <p class="error" id="erroMsg"></p>
+    
+
+        <h2>Purchase processing:</h2>
+        <h6></h6>
+
+    <label for="penaltyItemInput">Input the name of the item:</label>
+    <input type="text" id="penaltyItemInput" placeholder="Ex: Chocolate Bar">
+
+    <label for="penaltyQuantity">Quantity:</label>
+    <input type="number" id="penaltyQuantity" min="1" value="1">
+
+    <button id="addPenaltyItem">Add Purchase</button>
 
     <h3>Items added:</h2>
     <ul id="itemList"></ul>
-
     <h3>Credit total: <span id="totalCredits">0</span></h2>
-
     <h3>Reputation total: <span id="totalReputation">0</span></h2>
+        <p class="erro" id="erroMsg"></p>
+
+        <h6>version 0.6.1</h6>
 
     <script src="script.js"></script>
 </body>

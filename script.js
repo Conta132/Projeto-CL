@@ -123,6 +123,52 @@ const reputation = {
     "BANDAGE": 0,
     "FILM CAMERA": 0
 }
+const minusCreds = {
+    "m CHOCOLATE BAR": -35,
+    "m HARDTACK": -5,
+    "m SODA CAN": -30,
+    "m WATER CANTEEN": -10,
+    "m WATER BOTTLE": -15,
+    "m KITCHEN KNIFE": -10,
+    "m METAL PIPE": -40,
+    "m MONKEY WRENCH": -25,
+    "m MACHETE": -150,
+    "m SHOVEL": -40,
+    "m FIRE AXE": -100,
+    "m SLEDGEHAMMER": -150,
+    "m SPEAR": -40,
+    "m GLAIVE": -350,
+    "m SMG": -1000,
+    "m PIPE SMG": -750,
+    "m PIPE-MACHINE PISTOL": -600,
+    "m SCRAP REVOLVER": -2500,
+    "m SCRAP PISTOL": -100,
+    "m X16": -1000,
+    "m SMG MAG": -200,
+    "m PIPE SMG MAG": -150,
+    "m PIPE SHOTGUN SHELL": -90,
+    "m PIPE-MACHINE PISTOL MAG": -120,
+    "m SCRAP REVOLVER BULLET": -200,
+    "m PIPE ASSAULT RIFLE MAG": 0,
+    "m SCRAP PISTOL BULLET": -20,
+    "m X16 MAG": -200,
+    "m BATTERY": -5000,
+    "m FLASHLIGHT": -30,
+    "m FLOODLIGHT": -50,
+    "m CIVILIAN RADIO": -125,
+    "m BLUE GLOWSTICK": -150,
+    "m PURPLE GLOWSTICK": -450,
+    "m GREEN GLOWSTICK": -250,
+    "m WHITE GLOWSTICK": -1000,
+    "m LIGHTER": -200,
+    "m SCRAP LIGHTER": -50,
+    "m BANDAGE": -200,
+    "m FILM CAMERA": -50,
+    "m EMPLACEMENT FLOODLIGHT": -250,
+    "m EMPLACEMENT POINTLIGHT": -350,
+    "m EMPLACEMENT SCRAP LANTERN": -300,
+    "m TRAFFIC BARRIER": -200,
+}
 
 const itemNameMap = {};
 for (let key in credits) {
@@ -141,6 +187,46 @@ const resetBtn = document.getElementById("resetList");
 const itemList = document.getElementById("itemList");
 const totalDisplay = document.getElementById("totalCredits");
 const erroMsg = document.getElementById("erroMsg");
+const penaltyInput = document.getElementById("penaltyItemInput");
+const penaltyQuantityInput = document.getElementById("penaltyQuantity");
+const addPenaltyBtn = document.getElementById("addPenaltyItem");
+
+addPenaltyBtn.addEventListener("click", () => {
+    const userInput = penaltyInput.value.trim().toLowerCase();
+    const quantity = parseInt(penaltyQuantityInput.value) || 1;
+
+    if (!userInput) return;
+
+    const item = itemNameMap[userInput];
+    if (!item) {
+        erroMsg.textContent = `Item "${penaltyInput.value}" not found.`;
+        return;
+    }
+
+    if (quantity < 1) {
+        erroMsg.textContent = "Invalid quantity.";
+        return;
+    }
+
+    const penaltyKey = `m ${item}`;
+
+if (!minusCreds.hasOwnProperty(penaltyKey)) {
+    erroMsg.textContent = `Item "${item}" does not have a registered purchase value.`;
+    return;
+}
+
+    erroMsg.textContent = "";
+    addedItems.push(`${item} x${quantity} (purchase)`);
+    total += minusCreds[penaltyKey] * quantity;
+    total += credits[item] * quantity;
+
+
+    penaltyInput.value = "";
+    penaltyQuantityInput.value = "1";
+
+    updateDisplay();
+});
+
 
 function updateDisplay() {
     itemList.innerHTML = "";
@@ -162,18 +248,24 @@ addBtn.addEventListener("click", () => {
 
     const item = itemNameMap[userInput];
     if (!item) {
-        erroMsg.textContent = `Item "${input.value}" não encontrado.`;
+        erroMsg.textContent = `Item "${input.value}" not found.`;
         return;
     }
 
     if (quantity < 1) {
-        erroMsg.textContent = "Quantidade inválida.";
+        erroMsg.textContent = "Invalid Quantity.";
         return;
     }
 
     erroMsg.textContent = "";
     addedItems.push(`${item} x${quantity}`);
-    total += credits[item] * quantity;
+
+    if (minusCreds.hasOwnProperty(item)) {
+        total += minusCreds[item] * quantity;
+    } else {
+        total += credits[item] * quantity;
+    }
+
     reputationTotal += reputation[item] * quantity;
 
     input.value = "";
@@ -181,7 +273,6 @@ addBtn.addEventListener("click", () => {
 
     updateDisplay();
 });
-
 
 
 resetBtn.addEventListener("click", () => {
