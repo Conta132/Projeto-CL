@@ -175,58 +175,34 @@ for (let key in credits) {
     itemNameMap[key.toLowerCase()] = key;
 }
 
+const itemSelect = document.getElementById("itemInput");
+const penaltySelect = document.getElementById("penaltyItemInput");
+
+function populateDropdown(selectElement) {
+    for (const itemName in credits) {
+        const option = document.createElement("option");
+        option.value = itemName;
+        option.textContent = itemName;
+        selectElement.appendChild(option);
+    }
+}
+
+populateDropdown(itemSelect);
+populateDropdown(penaltySelect);
+
 let total = 0;
 let addedItems = [];
 let reputationTotal = 0;
 
 const reputationDisplay = document.getElementById("totalReputation");
 const quantityInput = document.getElementById("itemQuantity");
-const input = document.getElementById("itemInput");
 const addBtn = document.getElementById("addItem");
 const resetBtn = document.getElementById("resetList");
 const itemList = document.getElementById("itemList");
 const totalDisplay = document.getElementById("totalCredits");
 const erroMsg = document.getElementById("erroMsg");
-const penaltyInput = document.getElementById("penaltyItemInput");
 const penaltyQuantityInput = document.getElementById("penaltyQuantity");
 const addPenaltyBtn = document.getElementById("addPenaltyItem");
-
-addPenaltyBtn.addEventListener("click", () => {
-    const userInput = penaltyInput.value.trim().toLowerCase();
-    const quantity = parseInt(penaltyQuantityInput.value) || 1;
-
-    if (!userInput) return;
-
-    const item = itemNameMap[userInput];
-    if (!item) {
-        erroMsg.textContent = `Item "${penaltyInput.value}" not found.`;
-        return;
-    }
-
-    if (quantity < 1) {
-        erroMsg.textContent = "Invalid quantity.";
-        return;
-    }
-
-    const penaltyKey = `m ${item}`;
-
-if (!minusCreds.hasOwnProperty(penaltyKey)) {
-    erroMsg.textContent = `Item "${item}" does not have a registered purchase value.`;
-    return;
-}
-
-    erroMsg.textContent = "";
-    addedItems.push(`${item} x${quantity} (purchase)`);
-    total += minusCreds[penaltyKey] * quantity;
-    total += credits[item] * quantity;
-
-
-    penaltyInput.value = "";
-    penaltyQuantityInput.value = "1";
-
-    updateDisplay();
-});
-
 
 function updateDisplay() {
     itemList.innerHTML = "";
@@ -239,21 +215,17 @@ function updateDisplay() {
     reputationDisplay.textContent = reputationTotal;
 }
 
-
 addBtn.addEventListener("click", () => {
-    const userInput = input.value.trim().toLowerCase();
+    const item = itemSelect.value;
     const quantity = parseInt(quantityInput.value) || 1;
 
-    if (!userInput) return;
-
-    const item = itemNameMap[userInput];
     if (!item) {
-        erroMsg.textContent = `Item "${input.value}" not found.`;
+        erroMsg.textContent = "Please select an item.";
         return;
     }
 
     if (quantity < 1) {
-        erroMsg.textContent = "Invalid Quantity.";
+        erroMsg.textContent = "Invalid quantity.";
         return;
     }
 
@@ -268,20 +240,44 @@ addBtn.addEventListener("click", () => {
 
     reputationTotal += reputation[item] * quantity;
 
-    input.value = "";
-    quantityInput.value = "1";
-
     updateDisplay();
 });
 
+addPenaltyBtn.addEventListener("click", () => {
+    const item = penaltySelect.value;
+    const quantity = parseInt(penaltyQuantityInput.value) || 1;
+
+    if (!item) {
+        erroMsg.textContent = "Please select an item.";
+        return;
+    }
+
+    if (quantity < 1) {
+        erroMsg.textContent = "Invalid quantity.";
+        return;
+    }
+
+    const penaltyKey = `m ${item}`;
+    if (!minusCreds.hasOwnProperty(penaltyKey)) {
+        erroMsg.textContent = `Item "${item}" does not have a registered purchase value.`;
+        return;
+    }
+
+    erroMsg.textContent = "";
+    addedItems.push(`${item} x${quantity} (purchase)`);
+
+    total += (credits[item] || 0) * quantity;
+    total += minusCreds[penaltyKey] * quantity;
+
+    updateDisplay();
+});
 
 resetBtn.addEventListener("click", () => {
     addedItems = [];
     total = 0;
     reputationTotal = 0;
     erroMsg.textContent = "";
-    input.value = "";
     quantityInput.value = "1";
+    penaltyQuantityInput.value = "1";
     updateDisplay();
 });
-
