@@ -169,6 +169,16 @@ const minusCreds = {
     "m EMPLACEMENT SCRAP LANTERN": -300,
     "m TRAFFIC BARRIER": -200,
 }
+const geartiercred = {
+    "LOW TIER GEAR": 50,
+    "MEDIUM TIER GEAR": 100,
+    "HIGH TIER GEAR": 200
+}
+const geartierrep = {
+    "LOW TIER GEAR": 50,
+    "MEDIUM TIER GEAR": 70,
+    "HIGH TIER GEAR": 100
+}
 
 const itemNameMap = {};
 for (let key in credits) {
@@ -197,7 +207,6 @@ let reputationTotal = 0;
 const reputationDisplay = document.getElementById("totalReputation");
 const quantityInput = document.getElementById("itemQuantity");
 const addBtn = document.getElementById("addItem");
-const resetBtn = document.getElementById("resetList");
 const itemList = document.getElementById("itemList");
 const totalDisplay = document.getElementById("totalCredits");
 const erroMsg = document.getElementById("erroMsg");
@@ -241,6 +250,11 @@ addBtn.addEventListener("click", () => {
     reputationTotal += reputation[item] * quantity;
 
     updateDisplay();
+
+    erroMsg.style.color = "limegreen";
+    erroMsg.textContent = "Item added successfully!";
+    setTimeout(() => { erroMsg.textContent = ""; }, 1500);
+
 });
 
 addPenaltyBtn.addEventListener("click", () => {
@@ -270,14 +284,58 @@ addPenaltyBtn.addEventListener("click", () => {
     total += minusCreds[penaltyKey] * quantity;
 
     updateDisplay();
+    erroMsg.style.color = "limegreen";
+    erroMsg.textContent = "Item added successfully!";
+    setTimeout(() => { erroMsg.textContent = ""; }, 1500);
+
 });
 
-resetBtn.addEventListener("click", () => {
+const gearTierSelect = document.getElementById("gearTierInput");
+const gearTierQuantityInput = document.getElementById("gearTierQuantity");
+const addGearTierBtn = document.getElementById("addGearTier");
+
+addGearTierBtn.addEventListener("click", () => {
+    const gearTier = gearTierSelect.value;
+    const quantity = parseInt(gearTierQuantityInput.value) || 1;
+
+    if (!gearTier) {
+        erroMsg.textContent = "Please select a gear tier.";
+        return;
+    }
+
+    if (quantity < 1) {
+        erroMsg.textContent = "Invalid quantity.";
+        return;
+    }
+
+    erroMsg.textContent = "";
+    addedItems.push(`${gearTier} x${quantity} (Recovery)`);
+
+    const credValue = geartiercred[gearTier] || 0;
+    const repValue = geartierrep[gearTier] || 0;
+
+    total += credValue * quantity;
+    reputationTotal += repValue * quantity;
+
+    updateDisplay();
+    erroMsg.style.color = "limegreen";
+    erroMsg.textContent = "Item added successfully!";
+    setTimeout(() => { erroMsg.textContent = ""; }, 1500);
+});
+
+const clearAllBtn = document.getElementById("clearAllBtn");
+
+clearAllBtn.addEventListener("click", () => {
     addedItems = [];
     total = 0;
     reputationTotal = 0;
     erroMsg.textContent = "";
     quantityInput.value = "1";
     penaltyQuantityInput.value = "1";
+    gearTierQuantityInput.value = "1";
     updateDisplay();
+
+    erroMsg.style.color = "limegreen";
+    erroMsg.textContent = "All items and totals cleared!";
+    setTimeout(() => { erroMsg.textContent = ""; }, 1500);
 });
